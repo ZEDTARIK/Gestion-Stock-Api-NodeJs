@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema({
-
     FullName: {
         type: String,
         require: true,

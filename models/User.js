@@ -17,6 +17,11 @@ const Schema = mongoose.Schema({
         require: true,
         max: 30
     },
+    Password: {
+        type: String,
+        require: true,
+        max: 255
+    },
     InsertDateTime: {
         type: Date,
         default: Date.now
@@ -25,7 +30,6 @@ const Schema = mongoose.Schema({
         type: Number,
         default: 0
     }
-
 });
 
 module.exports = mongoose.model('User', Schema);

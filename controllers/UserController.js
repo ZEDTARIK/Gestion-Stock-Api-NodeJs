@@ -25,6 +25,7 @@ exports.login = (req, res) => {
 };
 
 exports.registerUser = async (req, res) => {
+    
     // validations Error
     const { error } = registerValidation(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -36,6 +37,7 @@ exports.registerUser = async (req, res) => {
     const slat = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.Password, slat);
 
+    const userObject = JSON.parse(req.body.user);
     const user = new User({
         FullName: req.body.FullName,
         UserName: req.body.UserName,

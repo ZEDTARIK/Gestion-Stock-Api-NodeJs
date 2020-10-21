@@ -3,8 +3,24 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { registerValidation } = require('../validations/userValidations');
 
-exports.registerUser = async (req, res) => {
+exports.login = (req, res, next) => {
+    User.findOne({ Email: req.body.Email })
+        .then((user) => {
+            if (!user) return res.status(400).json({ error: 'User not Found' })
+            bcrypt.compare(req.body.Password, user.Password)
+                .then(valid => {
+                    if (!valid) return res.status(401).json({ error: 'Mot de Pass Incorect !!' });
+                    res.status(200).json({
+                        UserIs: user._id,
+                        Token: 'TOKEN'
+                    });
+                })
+                .catch((error) => res.status(500).send.json({ error }));
+        })
+        .catch((error) => res.status(500).send.json({ error }));
+};
 
+exports.registerUser = async (req, res) => {
     // validations Error
     const { error } = registerValidation(req.body);
     if (error) return res.status(400).send(error.details[0].message);

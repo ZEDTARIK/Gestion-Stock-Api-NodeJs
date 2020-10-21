@@ -16,7 +16,7 @@ mongoose.connect(process.env.DB_CONNECT,
 //MidllWare
 app.use(express.json());
 app.use('/api/user', authRegister);
-//app.use('/api/products', product);
+app.use('/api/products', product);
 
 const port = process.env.port || 3000;
 app.listen(port, () => console.log(`App working in Port :  http://localhost:/${port}`))

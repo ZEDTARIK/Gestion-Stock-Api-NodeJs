@@ -34,4 +34,30 @@ router.post('/register', async (req, res) => {
     res.send('Register');
 });
 
+
+// Get One USER
+router.get('/:id', (req, res) => {
+    User.findOne({_id: req.params.id})
+        .then(user => res.status(200).json(user))
+        .catch(error => res.status(404).json({error}));
+});
+
+router.get('/', (req, res) => {
+    User.find()
+        .then(user => res.status(200).json(user))
+        .catch(error => res.status(404).json({error}));
+});
+
+router.put('/:id', (req, res) => {
+    User.updateOne({_id: req.params.id}, {...req.body, _id: req.params.id},)
+        .then(user => res.status(200).json({message : 'Object Modifié'}))
+        .catch(error => res.status(404).json({error}));
+});
+
+router.delete('/:id', (req, res) => {
+    User.deleteOne({_id: req.params.id})
+        .then(user => res.status(200).json({message : 'Object supprimé'}))
+        .catch(error => res.status(404).json({error}));
+});
+
 module.exports = router;

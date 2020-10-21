@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { registerValidation } = require('../validations/userValidations');
 
-exports.login = (req, res, next) => {
+exports.login = (req, res) => {
     User.findOne({ Email: req.body.Email })
         .then((user) => {
             if (!user) return res.status(400).json({ error: 'User not Found' })
@@ -11,8 +11,12 @@ exports.login = (req, res, next) => {
                 .then(valid => {
                     if (!valid) return res.status(401).json({ error: 'Mot de Pass Incorect !!' });
                     res.status(200).json({
-                        UserIs: user._id,
-                        Token: 'TOKEN'
+                        UserId: user._id,
+                        Token: jwt.sign(
+                            { userId: user._id },
+                            'RANDOM_TOKEN_SECRET',
+                            { expiresIn: '1h' }
+                        )
                     });
                 })
                 .catch((error) => res.status(500).send.json({ error }));
@@ -29,7 +33,7 @@ exports.registerUser = async (req, res) => {
     if (emailExist) return res.status(400).send('Email is already exist in the Database User');
 
     // Hash Password
-    const slat = await bcrypt.genSalt(11);
+    const slat = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.Password, slat);
 
     const user = new User({
@@ -41,12 +45,10 @@ exports.registerUser = async (req, res) => {
 
     try {
         const savedUser = await user.save();
-        res.send(savedUser);
+        res.status(200).send(savedUser);
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).json({ error });
     }
-
-    res.send('Register');
 };
 
 exports.getOneUser = (req, res) => {
